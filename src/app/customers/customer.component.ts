@@ -1,7 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 
 import { Customer } from './customer';
+
+function ratingRange(min: number, max: number): ValidatorFn {
+  return (c: AbstractControl): { [key: string]: boolean } | null => {
+    if (c.value !== null && (isNaN(c.value) || c.value < min || c.value > max)) {
+      return { 'range': true };
+    }
+    return null;
+  };
+}
+
 
 @Component({
   selector: 'app-customer',
@@ -26,7 +36,8 @@ export class CustomerComponent implements OnInit {
       email: ['', Validators.required],
       phone: '',
       notification: 'email',
-      sendCatalog: true // true by default
+      sendCatalog: true, // true by default,
+      rating: [null, ratingRange(1, 5)]
     });
   }
 
@@ -54,4 +65,5 @@ export class CustomerComponent implements OnInit {
     // reevaluate the form control's validation state
     phoneControl.updateValueAndValidity();
   }
+
 }
