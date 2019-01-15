@@ -37,6 +37,12 @@ export class CustomerComponent implements OnInit {
   // defines our formModel
   customerForm: FormGroup;
   customer = new Customer();
+  emailMessage: string;
+
+  private validationMessage = {
+    required: 'Please enter your email address',
+    email: 'Please enter a valid email address'
+  };
 
   constructor(private formBuilder: FormBuilder) { }
 
@@ -61,6 +67,11 @@ export class CustomerComponent implements OnInit {
     this.customerForm.get('notification').valueChanges.subscribe(
       value => this.setNotification(value)
     );
+
+    const emailControl = this.customerForm.get('emailGroup.email');
+    emailControl.valueChanges.subscribe(
+      value => this.setMessage(emailControl)
+    );
   }
 
   save() {
@@ -74,6 +85,14 @@ export class CustomerComponent implements OnInit {
       lastName: 'Yanaway',
       sendCatalog: false
     });
+  }
+
+  setMessage(c: AbstractControl): void {
+    this.emailMessage = '';
+    if ((c.touched || c.dirty) && c.errors) {
+      this.emailMessage = Object.keys(c.errors).map(
+        key => this.emailMessage += this.validationMessage[key]).join(' ');
+    }
   }
 
   setNotification(notifyVia: string): void {
