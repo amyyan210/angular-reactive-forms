@@ -33,7 +33,10 @@ export class CustomerComponent implements OnInit {
       // passed in formControls for each input on form
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', Validators.required],
+      emailGroup: this.formBuilder.group({
+        email: ['', Validators.required, Validators.email],
+        confirmEmail: ['', Validators.required]
+      }),
       phone: '',
       notification: 'email',
       sendCatalog: true, // true by default,
