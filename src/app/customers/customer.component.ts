@@ -12,6 +12,21 @@ function ratingRange(min: number, max: number): ValidatorFn {
   };
 }
 
+function emailMatcher(c: AbstractControl): {[key: string]: boolean} | null {
+
+  const emailControl = c.get('email');
+  const confirmEmailControl = c.get('confirmEmail');
+
+  if (emailControl.pristine || confirmEmailControl.pristine) {
+    return null;
+  }
+
+  if (emailControl.value === confirmEmailControl.value) {
+    return null;
+  }
+  return { 'match': true };
+
+}
 
 @Component({
   selector: 'app-customer',
@@ -34,13 +49,13 @@ export class CustomerComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       emailGroup: this.formBuilder.group({
-        email: ['', Validators.required, Validators.email],
+        email: ['', Validators.required],
         confirmEmail: ['', Validators.required]
-      }),
+      }, { validator: emailMatcher }),
       phone: '',
       notification: 'email',
       sendCatalog: true, // true by default,
-      rating: [null, ratingRange(1, 5)]
+      rating: [null, ratingRange(1, 5)],
     });
   }
 
